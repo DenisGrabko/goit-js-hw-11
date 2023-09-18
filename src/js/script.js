@@ -1,76 +1,57 @@
+// Ваш файл script.js
 import { fetchItemsByTag } from './find-photo-api.js';
 
 const form = document.getElementById('search-form');
 const input = form.querySelector('input[name="searchQuery"]');
-const gallery = document.querySelector('.gallery');
-const loadMoreButton = document.querySelector('.load-more');
-let page = 1;
-let searchQuery = '';
+const imageContainer = document.querySelector('.photo-card');
 
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    searchQuery = input.value.trim();
-    page = 1; 
+    const searchQuery = input.value.trim();
 
     if (searchQuery) {
         try {
-            const images = await fetchItemsByTag(searchQuery, page);
-            displayImages(images);
-            toggleLoadMoreButton(images);
+            const images = await fetchItemsByTag(searchQuery);
+
+            if (images.length === 0) {
+                showNoImagesMessage();
+            } else {
+                displayImages(images);
+            }
         } catch (error) {
             console.error('Error fetching images:', error);
+            // Handle the error (e.g., show an error message).
         }
     }
 });
 
-loadMoreButton.addEventListener('click', async () => {
-    try {
-        page++;
-        const images = await fetchItemsByTag(searchQuery);
-        displayImages(images);
-        toggleLoadMoreButton(images);
-    } catch (error) {
-        console.error('Error fetching more images:', error);
-    }
-});
+function showNoImagesMessage() {
+    imageContainer.innerHTML = '<p class="no-images-message">Sorry, there are no images matching your search query. Please try again.</p>';
+}
 
 function displayImages(images) {
-    if (page === 1) {
-        gallery.innerHTML = ''; 
-    }
+    imageContainer.innerHTML = '';
 
-    images.forEach((image) => {
+    images.forEach((image) => {       
         const cardInfo = `
         <div class="photo-card">
           <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy">
           <div class="info">
-            <p class="info-item"><b>Likes:</b> ${image.likes}</p>
-            <p class="info-item"><b>Views:</b> ${image.views}</p>
-            <p class="info-item"><b>Comments:</b> ${image.comments}</p>
-            <p class="info-item"><b>Downloads:</b> ${image.downloads}</p>
+            <p class="info-item">${image.likes}</p>
+            <p class="info-item">${image.views}</p>
+            <p class="info-item">${image.comments}</p>
+            <p class="info-item">${image.downloads}</p>
           </div>
         </div>
-        `;
-        gallery.innerHTML += cardInfo;
+        `       
+        imageContainer.innerHTML += cardInfo;
     });
 }
 
-function toggleLoadMoreButton(images) {
-    if (images.length <= 40) {
-        loadMoreButton.style.display = 'none'; 
-        gallery.insertAdjacentHTML('beforeend', '<p class="end-message">We\'re sorry, but you\'ve reached the end of search results.</p>');
-    } else {
-        loadMoreButton.style.display = 'block'; 
-        const endMessage = gallery.querySelector('.end-message');
-        if (endMessage) {
-            endMessage.remove(); 
-        }
-    }
-}
 
-form.submit();
-return form;
+// Запускаємо пошук за замовчуванням
+//form.submit();
 
 
 
