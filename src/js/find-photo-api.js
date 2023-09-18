@@ -14,12 +14,14 @@ export async function fetchItemsByTag(tag) {
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: true,
+        page: 1,
+        per_page: 40,
       }
     });
 
     const images = response.data.hits;
-    // Тут ви можете використовувати знайдені зображення для подальших дій.
     return images;
+    
   } catch (error) {
     console.error('Помилка запиту до Pixabay API:', error);
     notiflix.Notify.failure('Помилка запиту до Pixabay API');

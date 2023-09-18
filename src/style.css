@@ -1,0 +1,44 @@
+
+/*body {}*/
+    
+.search-form {
+    display: flex !important;
+    justify-content: center !important;
+    height: 50px;
+    margin: 15px 0 35px -10px !important;
+}
+
+.form-control {
+    width: 1200px !important;
+}
+
+.photo-card {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 35px;
+    margin-right: auto;
+    margin-left: 25px;
+    
+    /* overflow-x: hidden; */
+}
+
+.photo-one-card {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    height: 192px;    
+    border: 1px solid #8e8f99;
+}
+
+.info {
+    display: flex;
+    align-items: space-between;
+    gap: 20px;
+    justify-content: center;
+    border-bottom: 2px solid #8e8f99;
+}
+
+.info-item {
+    display: block;
+}

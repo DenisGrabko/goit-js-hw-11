@@ -35,8 +35,8 @@ function displayImages(images) {
 
     images.forEach((image) => {       
         const cardInfo = `
-        <div class="photo-card">
-          <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy">
+        <div class="photo-one-card">
+          <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" width="250px" height="150px">
           <div class="info">
             <p class="info-item">${image.likes}</p>
             <p class="info-item">${image.views}</p>
