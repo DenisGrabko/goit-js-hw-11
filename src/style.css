@@ -1,6 +1,6 @@
 
 /*body {}*/
-    
+ 
 .search-form {
     display: flex !important;
     justify-content: center !important;
@@ -9,25 +9,24 @@
 }
 
 .form-control {
-    width: 1200px !important;
+    width: 750px !important;
 }
 
 .photo-card {
     display: flex;
-    flex-wrap: wrap;
+    width: auto;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 35px;
-    margin-right: auto;
     margin-left: 25px;
-    
-    /* overflow-x: hidden; */
+    margin-right: auto;
 }
 
 .photo-one-card {
     display: flex;
     flex-direction: column;
-    width: 250px;
-    height: 192px;    
+    width: 452px;
+    height: 317px;
     border: 1px solid #8e8f99;
 }
 
