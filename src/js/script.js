@@ -5,8 +5,20 @@ const input = form.querySelector('input[name="searchQuery"]');
 const imageContainer = document.querySelector('.photo-card');
 const loadMoreButton = document.querySelector('.load-more');
 
+//////////////////////////////Modal Window///////////////////////////////////////////
+const modal = document.getElementById('myModal');
+const modalContent = document.querySelector('.modal-content');
+const closeModal = document.getElementById('closeModal');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const modalImage = document.createElement('img'); // Створюємо елемент <img> для модального вікна
+
 let page = 1;
 let searchQuery = '';
+let imagesArray = [];
+let currentImageArrayIndex = 0;
+
+modalContent.appendChild(modalImage);
 
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -16,9 +28,9 @@ form.addEventListener('submit', async (event) => {
 
     if (searchQuery) {
         try {
-            const images = await fetchItemsByTag(searchQuery, page);
-            displayImages(images);
-            toggleLoadMoreButton(images);
+            imagesArray = await fetchItemsByTag(searchQuery, page);
+            displayImages(imagesArray);
+            toggleLoadMoreButton(imagesArray);
         } catch (error) {
             console.error('Error fetching images:', error);
         }
@@ -28,9 +40,10 @@ form.addEventListener('submit', async (event) => {
 loadMoreButton.addEventListener('click', async () => {
     try {
         page++;
-        const images = await fetchItemsByTag(searchQuery, page);
-        displayImages(images);
-        toggleLoadMoreButton(images);
+        const newImages = await fetchItemsByTag(searchQuery, page);
+        imagesArray = imagesArray.concat(newImages);
+        displayImages(newImages);
+        toggleLoadMoreButton(newImages);
     } catch (error) {
         console.error('Error fetching more images:', error);
     }
@@ -38,13 +51,13 @@ loadMoreButton.addEventListener('click', async () => {
 
 function displayImages(images) {
     if (page === 1) {
-        imageContainer.innerHTML = ''; // Очистити контейнер при першому запиті
+        imageContainer.innerHTML = '';
     }
 
-    images.forEach((image) => {
+    images.forEach((image, index) => {
         const cardInfo = `
         <div class="photo-one-card">
-          <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" width="450px" height="250px">
+          <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" width="500px" height="250px">
           <div class="info">
             <p class="info-item"><b>Likes:</b> ${image.likes}</p>
             <p class="info-item"><b>Views:</b> ${image.views}</p>
@@ -55,26 +68,61 @@ function displayImages(images) {
         `;
 
         imageContainer.innerHTML += cardInfo;
+
+        const photoCard = imageContainer.lastElementChild;
+        photoCard.addEventListener('click', () => openModal(index));
     });
 }
 
 function toggleLoadMoreButton(images) {
     if (images.length < 40) {
-        loadMoreButton.style.display = 'none'; // Ховати кнопку, якщо немає більше зображень
+        loadMoreButton.style.display = 'none';
         if (page > 1) {
             imageContainer.insertAdjacentHTML('beforeend', '<p class="end-message">We\'re sorry, but you\'ve reached the end of search results.</p>');
         }
     } else {
-        loadMoreButton.style.display = 'block'; // Показувати кнопку, якщо є більше зображень
+        loadMoreButton.style.display = 'block';
         const endMessage = imageContainer.querySelector('.end-message');
         if (endMessage) {
-            endMessage.remove(); // Видалити повідомлення про завершення пошуку, якщо воно є
+            endMessage.remove();
         }
     }
 }
 
+function openModal(index) {
+    currentImageArrayIndex = index;
+    modalImage.src = imagesArray[index].webformatURL;
+    modalImage.alt = imagesArray[index].tags;
+    modal.style.display = 'block';
+}
 
-// Запускаємо пошук за замовчуванням
+function closeModalFunc() {
+    modal.style.display = 'none';
+}
+
+function showPrev() {
+    if (currentImageArrayIndex > 0) {
+        currentImageArrayIndex--;
+        setModalImage(imagesArray[currentImageArrayIndex].webformatURL, imagesArray[currentImageArrayIndex].tags);
+    }
+}
+
+function showNext() {
+    if (currentImageArrayIndex < imagesArray.length - 1) {
+        currentImageArrayIndex++;
+        setModalImage(imagesArray[currentImageArrayIndex].webformatURL, imagesArray[currentImageArrayIndex].tags);
+    }
+}
+
+closeModal.addEventListener('click', closeModalFunc);
+prevBtn.addEventListener('click', showPrev);
+nextBtn.addEventListener('click', showNext);
+
+function setModalImage(src, alt) {
+    modalImage.src = src;
+    modalImage.alt = alt;
+}
+
 //form.submit();
 
 

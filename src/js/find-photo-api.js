@@ -10,7 +10,7 @@ export async function fetchItemsByTag(tag) {
     const response = await axios.get(apiURL, {
       params: {
         key: apiKey,
-        q: tag, // Використовуємо параметр tag для пошуку за тегом.
+        q: tag, 
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: true,
