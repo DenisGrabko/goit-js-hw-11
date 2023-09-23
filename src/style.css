@@ -1,5 +1,7 @@
 
 /*body {}*/
+
+
  
 .search-form {
     display: flex !important;
@@ -18,7 +20,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 35px;
-    margin-left: 25px;
+    margin-left: 80px;
     margin-right: auto;
 }
 
@@ -93,4 +95,12 @@
 
 .next {
     right: 10px;
+}
+
+.load-more-blat {
+    width: 500px;
+    height: 80px;
+    margin: 35px;
+    margin-left: auto;
+    margin-right: auto;
 }

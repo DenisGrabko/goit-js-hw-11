@@ -1,5 +1,5 @@
 import axios from 'axios';
-import notiflix from "notiflix"
+import notiflix from "notiflix";
 
 const apiKey = '39444831-9a9227c6cf2b75d1cfcf35b46';
 
@@ -25,7 +25,6 @@ export async function fetchItemsByTag(tag) {
   } catch (error) {
     console.error('Помилка запиту до Pixabay API:', error);
     notiflix.Notify.failure('Помилка запиту до Pixabay API');
-    return [];
   }
 }
 
