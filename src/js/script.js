@@ -1,4 +1,6 @@
+import Notiflix from 'notiflix';
 import { fetchItemsByTag } from './find-photo-api.js';
+import * as basicLightbox from 'basiclightbox'; // Импортируем библиотеку BasicLightbox
 
 const form = document.getElementById('search-form');
 const input = form.querySelector('input[name="searchQuery"]');
@@ -11,7 +13,7 @@ const modalContent = document.querySelector('.modal-content');
 const closeModal = document.getElementById('closeModal');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
-const modalImage = document.createElement('img'); // Створюємо елемент <img> для модального вікна
+const modalImage = document.createElement('img');
 
 let page = 1;
 let searchQuery = '';
@@ -19,6 +21,7 @@ let imagesArray = [];
 let currentImageArrayIndex = 0;
 
 modalContent.appendChild(modalImage);
+loadMoreButton.style.display = "none";
 
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -26,24 +29,37 @@ form.addEventListener('submit', async (event) => {
     searchQuery = input.value.trim();
     page = 1;
 
-    if (searchQuery) {
-        try {
-            imagesArray = await fetchItemsByTag(searchQuery, page);
+    if (searchQuery === "") {
+        // Если searchQuery пустой, вывести сообщение об ошибке и завершить функцию
+        Notiflix.Notify.failure("Empty field");
+        return;
+    }
+
+    try {
+        imagesArray = await fetchItemsByTag(searchQuery, page);
+        if (imagesArray.length === 0) {
+            Notiflix.Notify.failure("No images found.");
+        } else {
             displayImages(imagesArray);
             toggleLoadMoreButton(imagesArray);
-        } catch (error) {
-            console.error('Error fetching images:', error);
         }
+    } catch (error) {
+        console.error('Error fetching images:', error);
     }
 });
+
 
 loadMoreButton.addEventListener('click', async () => {
     try {
         page++;
         const newImages = await fetchItemsByTag(searchQuery, page);
-        imagesArray = imagesArray.concat(newImages);
-        displayImages(newImages);
-        toggleLoadMoreButton(newImages);
+        if (newImages.length === 0) {
+            Notiflix.Notify.info("No more images to load.");
+        } else {
+            imagesArray = imagesArray.concat(newImages);
+            displayImages(newImages);
+            toggleLoadMoreButton(newImages);
+        }
     } catch (error) {
         console.error('Error fetching more images:', error);
     }
@@ -57,7 +73,7 @@ function displayImages(images) {
     images.forEach((image, index) => {
         const cardInfo = `
         <div class="photo-one-card">
-          <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" width="500px" height="250px">
+          <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" width="498px" height="250px">
           <div class="info">
             <p class="info-item"><b>Likes:</b> ${image.likes}</p>
             <p class="info-item"><b>Views:</b> ${image.views}</p>
@@ -91,9 +107,12 @@ function toggleLoadMoreButton(images) {
 
 function openModal(index) {
     currentImageArrayIndex = index;
-    modalImage.src = imagesArray[index].webformatURL;
-    modalImage.alt = imagesArray[index].tags;
-    modal.style.display = 'block';
+    const imageURL = imagesArray[index].webformatURL;
+
+    const lightbox = basicLightbox.create(`
+        <img src="${imageURL}" alt="${imagesArray[index].tags}">
+    `);
+    lightbox.show();
 }
 
 function closeModalFunc() {
