@@ -1,13 +1,12 @@
 import Notiflix from 'notiflix';
 import { fetchItemsByTag } from './find-photo-api.js';
-import * as basicLightbox from 'basiclightbox'; // Импортируем библиотеку BasicLightbox
+import * as basicLightbox from 'basiclightbox';
 
 const form = document.getElementById('search-form');
 const input = form.querySelector('input[name="searchQuery"]');
 const imageContainer = document.querySelector('.photo-card');
 const loadMoreButton = document.querySelector('.load-more');
 
-//////////////////////////////Modal Window///////////////////////////////////////////
 const modal = document.getElementById('myModal');
 const modalContent = document.querySelector('.modal-content');
 const closeModal = document.getElementById('closeModal');
@@ -30,7 +29,6 @@ form.addEventListener('submit', async (event) => {
     page = 1;
 
     if (searchQuery === "") {
-        // Если searchQuery пустой, вывести сообщение об ошибке и завершить функцию
         Notiflix.Notify.failure("Empty field");
         return;
     }
@@ -47,7 +45,6 @@ form.addEventListener('submit', async (event) => {
         console.error('Error fetching images:', error);
     }
 });
-
 
 loadMoreButton.addEventListener('click', async () => {
     try {
@@ -82,13 +79,20 @@ function displayImages(images) {
           </div>
         </div>
         `;
-
-        imageContainer.innerHTML += cardInfo;
-
-        const photoCard = imageContainer.lastElementChild;
+    
+       
+        const tempContainer = document.createElement('div');
+        tempContainer.innerHTML = cardInfo;
+        
+        
+        const photoCard = tempContainer.firstElementChild;
+        
+        
+        imageContainer.appendChild(photoCard);
+    
         photoCard.addEventListener('click', () => openModal(index));
-    });
-}
+    })};
+    
 
 function toggleLoadMoreButton(images) {
     if (images.length < 40) {
@@ -108,10 +112,12 @@ function toggleLoadMoreButton(images) {
 function openModal(index) {
     currentImageArrayIndex = index;
     const imageURL = imagesArray[index].webformatURL;
+    const imageAlt = imagesArray[index].tags;
 
     const lightbox = basicLightbox.create(`
-        <img src="${imageURL}" alt="${imagesArray[index].tags}">
+        <img src="${imageURL}" alt="${imageAlt}" class="modal-image">
     `);
+    
     lightbox.show();
 }
 

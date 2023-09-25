@@ -5,7 +5,7 @@ const apiKey = '39444831-9a9227c6cf2b75d1cfcf35b46';
 
 const apiURL = 'https://pixabay.com/api/';
 
-export async function fetchItemsByTag(tag) {
+export async function fetchItemsByTag(tag, page) {
   try {
     const response = await axios.get(apiURL, {
       params: {
@@ -14,7 +14,7 @@ export async function fetchItemsByTag(tag) {
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: true,
-        page: 1,
+        page,
         per_page: 40,
       }
     });
