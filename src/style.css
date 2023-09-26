@@ -98,6 +98,7 @@
 }
 
 .load-more {
+    display: none;
     width: 500px;
     height: 80px;
     margin: 35px;
